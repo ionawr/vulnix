@@ -40,7 +40,9 @@ def load(path):
     # re-encoded by eval()'s own UTF-8 pass, which just trades this
     # UnicodeDecodeError for an equally fatal UnicodeEncodeError.
     with open(path, encoding="utf-8", errors="replace") as f:
-        d_obj = eval(f.read(), {"__builtins__": {}, "Derive": Derive}, {})
+        line = f.read()
+        escaped = line.replace("\x00", r"\x00")
+        d_obj = eval(escaped, {"__builtins__": {}, "Derive": Derive}, {})
     _log.debug("Loading drv %s", d_obj.name)
     d_obj.store_path = path
     return d_obj
